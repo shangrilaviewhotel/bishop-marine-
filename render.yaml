@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: bishop-marine-academy
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_KEY
+        sync: false
