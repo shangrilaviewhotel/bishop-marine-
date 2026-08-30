@@ -14,7 +14,7 @@
   function shell(){
     const n=$('#site-nav'); if(n)n.innerHTML=`<a href="index.html">Home</a><a href="about.html">About</a><a href="courses.html">Courses</a><a href="international.html">International</a><a href="admissions.html">Admissions</a><a href="contact.html">Contact</a>`;
     $('#menu')?.addEventListener('click',()=>n?.classList.toggle('open'));
-    const f=$('#site-footer'); if(f)f.innerHTML=`<div><strong>${esc(site.name)}</strong><p>${esc(site.description)}</p></div><div><h4>Contact</h4><p>${site.phones.map(p=>`<a href="tel:${p}">${p}</a>`).join('<br>')}</p><p>${esc(site.address)}</p></div><div><h4>Explore</h4><p><a href="courses.html">Courses</a><br><a href="admissions.html">Admissions</a><br><a href="international.html">International</a></p></div><div class="footer-bottom">${esc(site.rc)} · <a href="${esc(site.website)}" rel="noopener">Current website</a></div>`;
+    const f=$('#site-footer'); if(f)f.innerHTML=`<div><strong>${esc(site.name)}</strong><p>${esc(site.description)}</p></div><div><h4>Contact</h4><p>${site.phones.map(p=>`<a href="tel:${p}">${p}</a>`).join('<br>')}</p><p>${esc(site.address)}</p></div><div><h4>Explore</h4><p><a href="courses.html">Courses</a><br><a href="admissions.html">Admissions</a><br><a href="international.html">International</a></p></div>`;
     $$('.js-whatsapp').forEach(a=>a.href=wa(a.dataset.message));
   }
   const card=c=>`<article class="card course-card"><div class="course-icon">${esc(c.name?.[0]||'C')}</div><div><span class="eyebrow">${esc(c.category)}</span><h3>${esc(c.name)}</h3><p>${esc(c.short)}</p><p class="muted">Duration: ${esc(c.duration)}</p><a class="text-link" href="course.html?slug=${encodeURIComponent(c.slug)}">View course</a></div></article>`;
