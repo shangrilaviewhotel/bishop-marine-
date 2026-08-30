@@ -3,12 +3,19 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   const wa=m=>`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(m||'Hello Bishop Marine Academy, I would like to make an enquiry.')}`;
 
+  function cinematicVideoUrl(){
+    const file='PixVerse_Pixverse-c1_Image_Text_540P_Create_a_.mp4';
+    // This site is deployed as a GitHub Pages project site. Build the URL from
+    // the actual deployment path instead of relying on each HTML page's path.
+    const parts=location.pathname.split('/').filter(Boolean);
+    const base=location.hostname.endsWith('github.io') && parts.length ? `/${parts[0]}/` : '/';
+    return `${location.origin}${base}${encodeURIComponent(file)}`;
+  }
+
   /* Scroll controls the cinematic timeline: 0% = first frame, 100% = last frame. */
   function initCinematicVideo(){
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     let sections=$$('.hero#cinematic-hero, .page-head');
-    // Course detail is the one public page without a page header; give it the same
-    // cinematic introduction without changing its existing course-detail content.
     if(!sections.length && $('#course-detail')){
       const root=$('#course-detail');
       const head=document.createElement('section');
@@ -28,13 +35,12 @@
         layer.innerHTML='<video class="cinematic-scroll-video" muted playsinline webkit-playsinline preload="auto" poster="assets/academy-team.webp"></video><div class="cinematic-video-overlay"></div>';
         section.prepend(layer);
         video=layer.querySelector('video');
-
-        // Resolve the MP4 relative to the current HTML page. This works on GitHub
-        // Pages project URLs as well as custom domains and prevents subpage path issues.
-        const videoUrl=new URL('PixVerse_Pixverse-c1_Image_Text_540P_Create_a_.mp4',document.baseURI).href;
-        video.src=videoUrl;
-        video.load();
       }
+
+      // Explicitly use the deployed project-site URL. This fixes GitHub Pages
+      // sub-page resolution and filenames containing spaces/special characters.
+      const src=cinematicVideoUrl();
+      if(video.src!==src){video.src=src;video.load();}
 
       let progress=section.querySelector('.cinematic-progress');
       if(!progress){
@@ -62,46 +68,40 @@
       };
       const draw=()=>{
         raf=0;
-        displayed+=(target-displayed)*.24;
-        if(Math.abs(target-displayed)<.0008)displayed=target;
-        if(ready&&Number.isFinite(video.duration)&&video.duration>0){
-          const t=displayed*video.duration;
-          if(Math.abs(t-lastTime)>.012){
+        displayed+=(target-displayed)*.28;
+        if(Math.abs(target-displayed)<.0005)displayed=target;
+        if(ready&&video.duration>0){
+          const t=Math.max(0,Math.min(video.duration-.001,displayed*video.duration));
+          if(Math.abs(t-lastTime)>.008){
             try{video.currentTime=t;lastTime=t}catch(e){}
           }
         }
         const bar=progress.querySelector('span');
         if(bar)bar.style.transform=`scaleX(${displayed})`;
-        if(Math.abs(target-displayed)>.0008)raf=requestAnimationFrame(draw);
+        if(Math.abs(target-displayed)>.0005)raf=requestAnimationFrame(draw);
       };
       const update=()=>{target=read();if(!raf)raf=requestAnimationFrame(draw)};
 
       const readyFn=()=>{
-        if(ready)return;
-        if(!Number.isFinite(video.duration)||video.duration<=0)return;
+        if(ready||!Number.isFinite(video.duration)||video.duration<=0)return;
         ready=true;
         video.pause();
-        target=read();
-        displayed=target;
-        try{
-          video.currentTime=target*video.duration;
-          lastTime=video.currentTime;
-        }catch(e){}
+        video.currentTime=Math.max(0,Math.min(video.duration-.001,read()*video.duration));
+        lastTime=video.currentTime;
         update();
       };
 
+      const fail=()=>section.classList.add('cinematic-fallback');
       video.addEventListener('loadedmetadata',readyFn);
       video.addEventListener('durationchange',readyFn);
       video.addEventListener('loadeddata',readyFn);
       video.addEventListener('canplay',readyFn);
-      video.addEventListener('error',()=>section.classList.add('cinematic-fallback'),{once:true});
-      video.addEventListener('abort',()=>section.classList.add('cinematic-fallback'),{once:true});
+      video.addEventListener('error',fail,{once:true});
+      video.addEventListener('abort',fail,{once:true});
       video.addEventListener('play',()=>video.pause());
       window.addEventListener('scroll',update,{passive:true});
       window.addEventListener('resize',update,{passive:true});
       update();
-
-      // If the browser already has the metadata cached, initialise immediately.
       if(video.readyState>=1)readyFn();
     });
   }
