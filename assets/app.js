@@ -6,19 +6,19 @@
   /* Scroll controls the cinematic timeline: 0% = first frame, 100% = last frame. */
   function initCinematicVideo(){
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    const sections=$$('.hero#cinematic-hero, .page-head.cinematic-page-head');
+    const sections=$$('.hero#cinematic-hero, .page-head');
     sections.forEach(section=>{
+      section.classList.add('cinematic-page-head');
       let video=section.querySelector('.cinematic-scroll-video');
       if(!video){
-        const layer=document.createElement('div');
-        layer.className='cinematic-video-layer';layer.setAttribute('aria-hidden','true');
+        const layer=document.createElement('div');layer.className='cinematic-video-layer';layer.setAttribute('aria-hidden','true');
         layer.innerHTML='<video class="cinematic-scroll-video" muted playsinline preload="auto" poster="assets/academy-team.webp"><source src="PixVerse_Pixverse-c1_Image_Text_540P_Create_a_.mp4" type="video/mp4"></video><div class="cinematic-video-overlay"></div>';
         section.prepend(layer);video=layer.querySelector('video');
       }
       let progress=section.querySelector('.cinematic-progress');
       if(!progress){progress=document.createElement('div');progress.className='cinematic-progress';progress.setAttribute('aria-hidden','true');progress.innerHTML='<span></span>';section.appendChild(progress)}
       const content=section.querySelector(':scope > .container');
-      if(content){const wrapper=document.createElement('div');wrapper.className='cinematic-content';content.parentNode.insertBefore(wrapper,content);wrapper.appendChild(content)}
+      if(content&&!content.parentElement.classList.contains('cinematic-content')){const wrapper=document.createElement('div');wrapper.className='cinematic-content';content.parentNode.insertBefore(wrapper,content);wrapper.appendChild(content)}
       let target=0,displayed=0,lastTime=-1,raf=0,ready=false;
       const clamp=v=>Math.max(0,Math.min(1,v));
       const read=()=>{const r=section.getBoundingClientRect();const travel=Math.max(1,section.offsetHeight-window.innerHeight);return clamp(-r.top/travel)};
@@ -26,8 +26,7 @@
       const update=()=>{target=read();if(!raf)raf=requestAnimationFrame(draw)};
       const readyFn=()=>{if(ready)return;ready=true;video.pause();target=read();displayed=target;if(video.duration>0){try{video.currentTime=target*video.duration;lastTime=video.currentTime}catch(e){}}update()};
       video.addEventListener('loadedmetadata',readyFn,{once:true});video.addEventListener('loadeddata',readyFn,{once:true});video.addEventListener('canplay',readyFn,{once:true});
-      video.addEventListener('error',()=>section.classList.add('cinematic-fallback'),{once:true});video.addEventListener('play',()=>video.pause());
-      window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update,{passive:true});update();
+      video.addEventListener('error',()=>section.classList.add('cinematic-fallback'),{once:true});video.addEventListener('play',()=>video.pause());window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update,{passive:true});update();
     });
   }
   async function loadRemoteData(){try{const [s,c,f]=await Promise.all([fetch('/api/site'),fetch('/api/courses'),fetch('/api/faqs')]);if(s.ok){const remote=await s.json();Object.assign(site,remote)}if(c.ok){const remote=await c.json();courses.splice(0,courses.length,...remote)}if(f.ok){const remote=await f.json();faqs.splice(0,faqs.length,...remote)}window.BISHOP_DYNAMIC=true}catch{window.BISHOP_DYNAMIC=false}}
