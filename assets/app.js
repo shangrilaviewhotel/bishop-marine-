@@ -6,7 +6,17 @@
   /* Scroll controls the cinematic timeline: 0% = first frame, 100% = last frame. */
   function initCinematicVideo(){
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    const sections=$$('.hero#cinematic-hero, .page-head');
+    let sections=$$('.hero#cinematic-hero, .page-head');
+    // Course detail is the one public page without a page header; give it the same
+    // cinematic introduction without changing its existing course-detail content.
+    if(!sections.length && $('#course-detail')){
+      const root=$('#course-detail');
+      const head=document.createElement('section');
+      head.className='page-head';
+      head.innerHTML='<div class="container"><span class="eyebrow">Bishop Marine Academy</span><h1>Professional training programmes</h1><p class="lead">Explore course details, practical skills and career preparation.</p></div>';
+      root.parentNode.insertBefore(head,root);
+      sections=[head];
+    }
     sections.forEach(section=>{
       section.classList.add('cinematic-page-head');
       let video=section.querySelector('.cinematic-scroll-video');
