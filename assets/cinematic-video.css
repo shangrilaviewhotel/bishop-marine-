@@ -1,0 +1,26 @@
+/* Scroll-controlled cinematic hero.
+   The hero itself provides the scroll distance while the video stays visually
+   pinned behind the existing hero content. JS maps that distance to currentTime. */
+.hero#cinematic-hero{min-height:220vh;position:relative;isolation:isolate;overflow:visible;background-image:none!important;background-color:#061826!important;padding:0!important}
+#cinematic-hero .hero-video-layer{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:clip}
+#cinematic-hero .hero-scroll-video{position:sticky;top:0;display:block;width:100%;height:100vh;object-fit:cover;object-position:center;pointer-events:none;background:#061826}
+#cinematic-hero .hero-video-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,14,24,.70) 0%,rgba(2,14,24,.34) 48%,rgba(2,14,24,.28) 100%),linear-gradient(180deg,rgba(2,14,24,.22),rgba(2,14,24,.08) 55%,rgba(2,14,24,.52));pointer-events:none}
+#cinematic-hero .hero-grid{position:relative;z-index:3;min-height:100vh;padding-top:110px;padding-bottom:110px}
+#cinematic-hero .hero-cinematic-progress{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:55;background:rgba(255,255,255,.10);pointer-events:none}
+#cinematic-hero .hero-cinematic-progress span{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left center;background:var(--brass-light);box-shadow:0 0 14px rgba(226,201,141,.55)}
+#cinematic-hero.cinematic-video-failed{background-image:var(--photo1)!important;background-size:cover!important;background-position:center!important}
+#cinematic-hero.cinematic-video-failed .hero-video-layer{display:none}
+@media(max-width:850px){
+  #cinematic-hero{min-height:210vh!important}
+  #cinematic-hero .hero-grid{padding-top:90px;padding-bottom:90px;min-height:100vh}
+  #cinematic-hero .hero-scroll-video{height:100svh;height:100vh}
+  #cinematic-hero .hero-video-overlay{background:linear-gradient(180deg,rgba(2,14,24,.36),rgba(2,14,24,.56))}
+}
+@media(max-width:560px){
+  #cinematic-hero{min-height:190vh!important}
+  #cinematic-hero .hero-grid{padding-top:72px;padding-bottom:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  #cinematic-hero{min-height:690px!important;background-image:var(--photo1)!important;background-size:cover!important;background-position:center 42%!important}
+  #cinematic-hero .hero-video-layer,#cinematic-hero .hero-cinematic-progress{display:none!important}
+}
