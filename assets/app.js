@@ -5,8 +5,6 @@
 
   function cinematicVideoUrl(){
     const file='PixVerse_Pixverse-c1_Image_Text_540P_Create_a_.mp4';
-    // This site is deployed as a GitHub Pages project site. Build the URL from
-    // the actual deployment path instead of relying on each HTML page's path.
     const parts=location.pathname.split('/').filter(Boolean);
     const base=location.hostname.endsWith('github.io') && parts.length ? `/${parts[0]}/` : '/';
     return `${location.origin}${base}${encodeURIComponent(file)}`;
@@ -32,13 +30,11 @@
         const layer=document.createElement('div');
         layer.className='cinematic-video-layer';
         layer.setAttribute('aria-hidden','true');
-        layer.innerHTML='<video class="cinematic-scroll-video" muted playsinline webkit-playsinline preload="auto" poster="assets/academy-team.webp"></video><div class="cinematic-video-overlay"></div>';
+        layer.innerHTML='<video class="cinematic-scroll-video" muted playsinline webkit-playsinline preload="auto"></video><div class="cinematic-video-overlay"></div>';
         section.prepend(layer);
         video=layer.querySelector('video');
       }
 
-      // Explicitly use the deployed project-site URL. This fixes GitHub Pages
-      // sub-page resolution and filenames containing spaces/special characters.
       const src=cinematicVideoUrl();
       if(video.src!==src){video.src=src;video.load();}
 
